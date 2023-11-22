@@ -203,26 +203,28 @@ final class IP_SB extends LocatorService implements Locator {
             $point
         );
     }
-}
-final class FreeIpApiService extends LocatorService implements Locator {
-    public function locate(Ip $ip): Location|null
-    {
-        $url = 'https://freeipapi.com/api/json/' . $ip->getIp();
-        $json = $this->requester->request($url);
-        if (!$json)
-            return null;
-        $point = new Point(
-            $json['latitude'],
-            $json['longitude'],
-        );
-        return new Location(
-            $ip,
-            $json['countryName'],
-            $json['cityName'],
-            $json['zipCode'],
-            $point
-        );
-    }
+    /*}
+
+     final class FreeIpApiService extends LocatorService implements Locator {
+        public function locate(Ip $ip): Location|null
+        {
+            $url = 'https://freeipapi.com/api/json/' . $ip->getIp();
+            $json = $this->requester->request($url);
+            if (!$json)
+                return null;
+            $point = new Point(
+                $json['latitude'],
+                $json['longitude'],
+            );
+            return new Location(
+                $ip,
+                $json['countryName'],
+                $json['cityName'],
+                $json['zipCode'],
+                $point
+            );
+        }
+    */
 }
 final class ReallyFreeGeoIpService extends LocatorService implements Locator {
     public function locate(Ip $ip): Location|null
@@ -247,11 +249,11 @@ final class ReallyFreeGeoIpService extends LocatorService implements Locator {
 
 $requester = new FileGetRequester();
 $ip = new Ip('46.191.148.155');
-$s1 = new FreeIpApiService($requester);
-$s2 = new IpApiComService($requester);
-$s3 = new ReallyFreeGeoIpService($requester);
-$s4 = new IP_SB($requester);
-foreach ([$s1,$s2,$s3,$s4] as $service) {
+
+$s1 = new IpApiComService($requester);
+$s2 = new ReallyFreeGeoIpService($requester);
+$s3 = new IP_SB($requester);
+foreach ([$s1,$s2,$s3] as $service) {
     $info = $service->locate($ip);
     if ($info !== null) {
         echo get_class($service) . PHP_EOL;
